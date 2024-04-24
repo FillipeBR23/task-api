@@ -3,6 +3,7 @@ const db = require('./infrastructure/db');
 const bodyParser = require('body-parser')
 const taskRoute = require('./routes/taskRoutes');
 const cors = require('cors');
+const createToken = require('./middlewares/auth');
 const app = express();
 
 
@@ -15,6 +16,15 @@ app.use(bodyParser.urlencoded({ extended: true }))
 db.sync()
 
 app.use('/tasks', taskRoute)
+app.post('/login', (req, res)=>{
+   res.send({token: createToken(req.body)})
+})
+app.post('/user', (req, res)=>{
+    res.send ({
+        msg: validToken(req.headers.authorization.replace("Bearer", ''))
+    })
+ })
+ 
 
 // Iniciar o servidor
 app.listen(port, () => {
